@@ -1,0 +1,18 @@
+﻿.modalbtn {
+    display: inline-block !important;
+    font-weight: 400 !important;
+    color: #212529 !important;
+    text-align: center !important;
+    border: 1px solid transparent !important;
+    padding: .375rem .75rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    border-radius: .25rem !important;
+    color: #fff !important;
+    background-color: #007bff !important;
+}
+
+
+.modalbtn {
+    background-color: #0069d9;
+}

@@ -1,0 +1,205 @@
+﻿@model Core.Entities.Order
+@using Presentation.Enums
+@{
+    ViewData["Title"] = "E-STORE";
+    var controller = "Home";
+    Layout = "_userLayout";
+
+}
+<style>
+    .row.align-items-center {
+        /*display: none;*/
+    }
+</style>
+<!-- slider Area Start-->
+<div class="slider-area ">
+    <!-- Mobile Menu -->
+    <div class="single-slider slider-height2 d-flex align-items-center" data-background="/user/img/hero/category.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="hero-cap text-center">
+                        <h2>Checkout</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- slider Area End-->
+<!--================Checkout Area =================-->
+<section class="checkout_area section_padding">
+    <div class="container">
+        <div class="billing_details">
+            <div class="row">
+                <div class="col-lg-7">
+                    <h3>Billing Details</h3>
+                    <form class="row contact_form" action="/@controller/CheckOut" method="post" novalidate="novalidate">
+                        @Html.AntiForgeryToken()
+                        <div class="col-md-12 form-group p_star">
+                            <input type="text" class="form-control" asp-for="CustName" placeholder="Name" />
+                            @*<span class="placeholder" data-placeholder="Name"></span>*@
+                            <span asp-validation-for="CustName" class="text-danger" id="spanCustName"></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input type="text" class="form-control" asp-for="Phone" placeholder="Phone" />
+                            @*<span class="placeholder" data-placeholder="Phone number"></span>*@
+                            <span asp-validation-for="Phone" class="text-danger" id="spanPhone"></span>
+                        </div>
+                        <div class="col-md-6 form-group p_star">
+                            <input type="text" class="form-control" asp-for="Email" placeholder="Email" />
+                            @*<span class="placeholder" data-placeholder="Email"></span>*@
+                            <span asp-validation-for="Email" class="text-danger" id="spanEmail"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <textarea class="form-control" asp-for="Address" rows="1"
+                                      placeholder="Address"></textarea>
+                            <span asp-validation-for="Address" class="text-danger" id="spanAddress"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <button type="submit" class="btn_3 " href="/@controller/Index">Proceed to Order</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-5">
+                    <div class="order_box">
+                        <h2>Your Order</h2>
+                        <ul class="list">
+                            <li>
+                                <a href="#">
+                                    <b>
+                                        Product
+                                        <span>Total</span>
+                                    </b>
+                                </a>
+                            </li>
+                            @foreach (var item in ViewBag.data)
+                            {
+                                <li>
+                                    <a href="#">
+                                        @item.ProductName (@item.quantity)
+                                        <span class="last">$@item.UnitPrice</span>
+                                    </a>
+                                </li>
+
+                            }
+                        </ul>
+                        <ul class="list list_2">
+                            <li>
+
+                                <a href="#">
+                                    <b>
+                                        Total Quantity
+                                        <span>@ViewBag.totalQuantity</span>
+                                    </b>
+                                </a>
+
+                            </li>
+                        </ul>
+                        <ul class="list list_2">
+                            <li>
+                                <a href="#">
+                                    <b>
+                                        Total Price
+                                        <span>$@ViewBag.totalPrice</span>
+                                    </b>
+                                </a>
+                            </li>
+                        </ul>
+                        @*<div class="creat_account">
+                                <input type="checkbox" id="f-option4" name="selector" />
+                                <label for="f-option4">I’ve read and accept the </label>
+                                <a href="#">terms & conditions*</a>
+                            </div>*@
+                        <a class="btn_3 genric-btn info radius" href="/@controller/Index">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Checkout Area =================-->
+
+@section Scripts
+    {
+    <script src="@Url.Content("~/js/jquery.mycart.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/user/myanmar-phonenumber/myanmar-phonenumber.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+            $(function () {
+                var goToCartIcon = function ($addTocartBtn) {
+                    var $cartIcon = $(".my-cart-icon");
+                    var $image = $('<img width="30px" height="30px" src="' + $addTocartBtn.data("image") + '"/>').css({ "position": "fixed", "z-index": "999" });
+                    $addTocartBtn.prepend($image);
+                    var position = $cartIcon.position();
+                    $image.animate({
+                        top: position.top,
+                        right: 100
+                    }, 800, "linear", function () {
+                        $image.remove();
+                    });
+                }
+
+                $('.my-cart-btn').myCart({
+                    currencySymbol: '$',
+                    classCartIcon: 'my-cart-icon',
+                    classCartBadge: 'my-cart-badge',
+                    classProductQuantity: 'my-product-quantity',
+                    classProductRemove: 'my-product-remove',
+                    classCheckoutCart: 'my-cart-checkout',
+                    affixCartIcon: true,
+                    showCheckoutModal: true,
+                    numberOfDecimals: 2,
+                    clickOnAddToCart: function ($addTocart) {
+                        goToCartIcon($addTocart);
+                    },
+                    afterAddOnCart: function (products, totalPrice, totalQuantity) {
+                    },
+                    clickOnCartIcon: function ($cartIcon, products, totalPrice, totalQuantity) {
+                    },
+                    checkoutCart: function (products, totalPrice, totalQuantity) {
+                        var checkoutString = "Total Price: " + totalPrice + "\nTotal Quantity: " + totalQuantity;
+                        checkoutString += "\n\n id \t name \t summary \t price \t quantity \t image path";
+                        $.each(products, function () {
+                            checkoutString += ("\n " + this.id + " \t " + this.name + " \t " + this.summary + " \t " + this.price + " \t " + this.quantity + " \t " + this.image);
+                        });
+                        debugger;
+                        //ajax
+                        $.ajax({
+                            url: '/Home/CheckOutProductList',
+                            type: "POST",
+                            dataType: "JSON",
+                            async: false,
+                            cache: false,
+                            data: { items: products },
+                            success: function (Resmodel) {
+                                window.location = "/Home/CheckOut"
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            }
+
+                        }).done(function (data) {
+
+
+
+                        }).fail(function (data) {
+
+                        });
+                    },
+                    getDiscountPrice: function (products, totalPrice, totalQuantity) {
+                        return totalPrice * 0.5;
+                    }
+                });
+            });
+
+        $(document)
+            .on('click', 'form button[type=submit]', function (e) {
+                var isValid = myanmarPhoneNumber.isValidMMPhoneNumber($('#Phone').val());
+                if (!isValid) {
+                    $("#spanPhone").text("Please Enter Valid Phone Number");
+                    e.preventDefault();
+                }
+            });
+    </script>
+}

@@ -1,0 +1,73 @@
+﻿@using Presentation.Enums
+@model Core.Entities.Product
+
+@{
+    Layout = "_adminLayout";
+    ViewData["Title"] = "Create Product";
+    //ViewData["Action"] = ViewEnum.Action.Create.ToDescription();
+    var controller = "Products";
+}
+
+
+<div class="card mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Product</h5>
+    </div>
+    <div class="card-body">
+
+        <form action="/@controller/Create" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            @*@if (ViewData["Action"].ToString() == ViewEnum.Action.Edit.ToDescription())
+            {
+             <input asp-for="Id" hidden />
+            }*@
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Product Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="basic-default-name" asp-for="ProductName">
+                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Price</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="basic-default-name" asp-for="Price" min="0">
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Category</label>
+                <div class="col-sm-10">
+                    <select class="form-control" asp-for="CategoryId" asp-items="ViewBag.Categories" id="">
+                        <option value="">Please Select Parent Menu</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Product Image</label>
+                <div class="col-sm-10">
+                    <input type="file" class="form-control" id="File_Upload" name="File" accept=".png, .jpg, .jpeg"  />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Product Information</label>
+                <div class="col-sm-10">
+                    <textarea rows="4" cols="10" class="form-control" id="basic-default-name" asp-for="Information"></textarea>
+                    <span asp-validation-for="Information" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row justify-content-end">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a asp-controller="@controller" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

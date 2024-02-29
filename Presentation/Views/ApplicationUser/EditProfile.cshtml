@@ -1,0 +1,96 @@
+﻿@using Presentation.Enums
+@model Presentation.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "My Profile";
+    var controller = "ApplicationUser";
+}
+
+<div class="card mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Profile Details</h5>
+    </div>
+    <div class="card-body">
+
+        <form action="/@controller/EditProfile" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="basic-default-name" asp-for="Name">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Email</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="basic-default-name" asp-for="Email" min="0">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Phone No.</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="basic-default-name" asp-for="PhoneNumber" min="0">
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Profile Photo</label>
+                <div class="col-sm-10">
+                    <img class="card" src="~/Files/@Model.ImgPath" alt="Profile Photo" width="100" height="100" />
+                    <input type="hidden" value="@Model.ImgPath" asp-for="ImgPath" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Change Photo</label>
+                <div class="col-sm-10">
+                    <input type="file" class="form-control" id="File_Upload" name="File" accept=".png, .jpg, .jpeg" />
+                </div>
+            </div>
+            <input type="hidden" value="true" name="edit" />
+            <div class="row justify-content-end">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save Change</button>
+                    <a asp-controller="@controller" asp-action="Dashboard" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="@Url.Content("~/js/common.js")" type="text/javascript"></script>
+    @if (TempData["notice"] != null)
+    {
+        switch ((int)TempData["notice"])
+        {
+            case (int)StatusEnum.NoticeStatus.Success:
+                <script>SaveAlert('center', 'success', 'Profile');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Edit:
+                <script>EditAlert('center', 'success', 'Profile');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Delete:
+                <script>DeleteAlert('center', 'success', 'Profile');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Deliver:
+                <script>DeliverAlert('center', 'success', 'Profile');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Change:
+                <script>SaveAlert('center', 'success', 'Profile');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.EditProfile:
+                <script>SaveAlert('center', 'success', 'Profile');</script>
+                break;
+        }
+    }
+}
+
+
+

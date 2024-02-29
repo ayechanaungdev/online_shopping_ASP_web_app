@@ -1,0 +1,90 @@
+﻿@using Presentation.Enums
+@using X.PagedList
+@model IPagedList<Core.Entities.Category>
+@{
+    var controller = "Categories";
+    ViewData["Title"] = "All Category";
+    var query = Context.Request.Query;
+    var CategoryName = query["CategoryName"];
+    var count = 1;
+
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="/@controller/Index" method="get">
+            <div class="row">
+                <label class="col-sm-2 col-form-label" for="basic-default-name">Category Name</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" value="@CategoryName" name="CategoryName">
+                </div>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-primary mx-1">Search</button>
+                    <a asp-controller="/@controller" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<a asp-controller="@controller" asp-action="Create" class="btn btn-primary m-2">Create</a>
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@((((int)ViewBag.Page - 1) * (int)ViewBag.PageSize) + count)</td>
+                        <td>@item.Name</td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a asp-controller="@controller" asp-action="Edit" asp-route-Id="@item.Id" class="dropdown-item"><i class="bx bx-edit-alt me-1"></i>Edit</a>
+                                    <button asp-controller="@controller" asp-action="Delete" asp-route-Id="@item.Id" class="dropdown-item"
+                                            onclick="DeleteConfirm('/@controller/Delete/',@item.Id)">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+        <partial name="_Pagination" model="Model" view-data="ViewData" />
+</div>
+
+@section Scripts
+{
+    <script src="@Url.Content("~/js/common.js")" type="text/javascript"></script>
+
+    @if (TempData["notice"] != null)
+    {
+        switch ((int)TempData["notice"])
+        {
+            case (int)StatusEnum.NoticeStatus.Success:
+                <script>SaveAlert('center', 'success', 'Category');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Edit:
+                <script>EditAlert('center', 'success', 'Category');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Delete:
+                <script>DeleteAlert('center', 'success', 'Category');</script>
+                break;
+        }
+
+    }
+}

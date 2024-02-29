@@ -1,0 +1,123 @@
+﻿@using Presentation.Enums
+@using X.PagedList
+
+@model IEnumerable<Core.Entities.Product>
+
+@{
+    var controller = "Products";
+    ViewData["Title"] = "All Products";
+
+    var query = Context.Request.Query;
+    var ProductName = query["ProductName"];
+
+    var queryCat = Context.Request.Query;
+    var CategoryId = queryCat["CategoryId"];
+    var counts = 1;
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="/@controller/Index" method="get">
+            <div class="row">
+                <div class="col-4 d-flex">
+                    <input type="text" class="form-control" value="@ProductName" name="ProductName" placeholder="Enter Product Name ...">
+                </div>
+                <div class="col-4">
+                    <select class="form-select px-2" asp-items="ViewBag.Categories" name="CategoryId" id="">
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary mx-1">Search</button>
+                    <a asp-controller="/@controller" asp-action="Index" class="btn btn-secondary mx-1">Cancel</a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<a asp-controller="@controller" asp-action="Create" class="btn btn-primary m-2">Create</a>
+<!-- Bordered Table -->
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Product Information</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>@((((int)ViewBag.Page - 1) * (int)ViewBag.PageSize) + counts)</td>
+                        <td><strong>@item.ProductName</strong></td>
+                        <td>@item.Price</td>
+                        <td>
+                            <div class="w-75 h-75">
+                                <div class="card">
+                                    <img class="card-img-top" src="~/Files/@item.ImgPath" alt="Product Image" width="50" height="50"/>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="text-overflow-dynamic-container">
+                                <span class="text-overflow-dynamic-ellipsis" title="...your text again for usability...">
+                                    @item.Information
+                                </span>
+                            </span>
+                        </td>
+                        <td>@item.Category.Name</td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a asp-controller="@controller" asp-action="Edit" asp-route-Id="@item.Id" class="dropdown-item"><i class="bx bx-edit-alt me-1"></i>Edit</a>
+                                    <button asp-controller="@controller" asp-action="Delete" asp-route-Id="@item.Id" class="dropdown-item"
+                                            onclick="DeleteConfirm('/@controller/Delete/',@item.Id)">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    counts++; 
+                    }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pagination" model="Model" view-data="ViewData" />
+</div>
+<!--/ Bordered Table -->
+
+@section Scripts
+{
+    <script src="@Url.Content("~/js/common.js")" type="text/javascript"></script>
+
+    @if (TempData["notice"] != null)
+    {
+        switch ((int)TempData["notice"])
+        {
+            case (int)StatusEnum.NoticeStatus.Success:
+                <script>SaveAlert('center', 'success', 'Product');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Edit:
+                <script>EditAlert('center', 'success', 'Product');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Delete:
+                <script>DeleteAlert('center', 'success', 'Product');</script>
+                break;
+        }
+
+    }
+}

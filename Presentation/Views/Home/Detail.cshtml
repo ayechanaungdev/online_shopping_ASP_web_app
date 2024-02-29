@@ -1,0 +1,131 @@
+﻿@using Presentation.Enums
+@model Core.Entities.Product
+@{
+    ViewData["Title"] = "E-STORE";
+    var controller = "Home";
+    Layout = "_userLayout";
+
+}
+
+<div class="slider-area ">
+    <div class="single-slider slider-height2 d-flex align-items-center" data-background="/user/img/hero/category.jpg">
+      
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="hero-cap text-center">
+                            <h2>Product Details</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="product_image_area">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="product_img_slide owl-carousel">
+                        <div class="single_product_img">
+                            <img src="~/user/img/categori/@Model.ImgPath" alt="#" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="single_product_text text-center">
+                        <h3>
+                            @Model.ProductName
+                        </h3>
+                        <h4>$ @Model.Price</h4>
+                        <p>
+                            @Model.Information
+                        </p>
+                        <div class="card_area">
+                            @*<div class="product_count_area">
+                                <p>$ @Model.Price</p>
+                            </div>*@
+                            <div class="hero__btn" data-animation="fadeInRight" data-delay="1s">
+                                <button class="btn hero-btn my-cart-btn" data-id="@Model.Id" data-name="@Model.ProductName" data-summary="test-summary" data-price="@Model.Price" data-quantity="1" data-image="/user/img/categori/@Model.ImgPath">Add To Cart</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    @section Scripts
+    {
+        <script src="@Url.Content("~/js/jquery.mycart.js")" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            $(function () {
+                var goToCartIcon = function ($addTocartBtn) {
+                    var $cartIcon = $(".my-cart-icon");
+                    var $image = $('<img width="30px" height="30px" src="' + $addTocartBtn.data("image") + '"/>').css({ "position": "fixed", "z-index": "999" });
+                    $addTocartBtn.prepend($image);
+                    var position = $cartIcon.position();
+                    $image.animate({
+                        top: position.top,
+                        right: 100
+                    }, 800, "linear", function () {
+                        $image.remove();
+                    });
+                }
+
+                $('.my-cart-btn').myCart({
+                    currencySymbol: '$',
+                    classCartIcon: 'my-cart-icon',
+                    classCartBadge: 'my-cart-badge',
+                    classProductQuantity: 'my-product-quantity',
+                    classProductRemove: 'my-product-remove',
+                    classCheckoutCart: 'my-cart-checkout',
+                    affixCartIcon: true,
+                    showCheckoutModal: true,
+                    numberOfDecimals: 2,
+                    clickOnAddToCart: function ($addTocart) {
+                        goToCartIcon($addTocart);
+                    },
+                    afterAddOnCart: function (products, totalPrice, totalQuantity) {
+                    },
+                    clickOnCartIcon: function ($cartIcon, products, totalPrice, totalQuantity) {
+                    },
+                    checkoutCart: function (products, totalPrice, totalQuantity) {
+                        var checkoutString = "Total Price: " + totalPrice + "\nTotal Quantity: " + totalQuantity;
+                        checkoutString += "\n\n id \t name \t summary \t price \t quantity \t image path";
+                        $.each(products, function () {
+                            checkoutString += ("\n " + this.id + " \t " + this.name + " \t " + this.summary + " \t " + this.price + " \t " + this.quantity + " \t " + this.image);
+                        });
+                        debugger;
+                        //ajax
+                        $.ajax({
+                            url: '/Home/CheckOutProductList',
+                            type: "POST",
+                            dataType: "JSON",
+                            async: false,
+                            cache: false,
+                            data: { items: products },
+                            success: function (Resmodel) {
+                                window.location = "/Home/CheckOut"
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            }
+
+                        }).done(function (data) {
+
+
+
+                        }).fail(function (data) {
+
+                        });
+                    },
+                    getDiscountPrice: function (products, totalPrice, totalQuantity) {
+                        return totalPrice * 0.5;
+                    }
+                });
+            });
+        </script>
+    }
+

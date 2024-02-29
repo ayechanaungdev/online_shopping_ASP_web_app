@@ -1,0 +1,28 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@using System.Dynamic
+@using Microsoft.AspNetCore.Http
+
+@Html.PagedListPager((IPagedList)Model, page =>
+{
+    var query = ViewData["Query"];
+    var actionName = ViewData["ActionName"] != null ? ViewData["ActionName"].ToString() : "Index";
+    if (query != null)
+    {
+        var obj = new Dictionary<string, object>();
+        obj.Add("page", page);
+        foreach (var item in (QueryCollection)query)
+        {
+            if (!obj.ContainsKey(item.Key))
+            {
+                obj.Add(item.Key, item.Value);
+            }
+        }
+        return Url.Action(actionName, (object)obj);
+    }
+    else
+    {
+        return Url.Action(actionName, new { page });
+    }
+}, new PagedListRenderOptions { ContainerDivClasses = new String[] { "text-center m-auto" }, UlElementClasses = new String[] { "pagination", "pagination-sm" },LiElementClasses=new String[] { "px-2" } ,LinkToPreviousPageFormat = "«", LinkToNextPageFormat = "»" })

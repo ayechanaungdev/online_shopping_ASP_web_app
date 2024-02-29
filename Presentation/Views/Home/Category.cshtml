@@ -1,0 +1,191 @@
+﻿@using Presentation.Enums
+@{
+    ViewData["Title"] = "Category";
+    var controller = "Home";
+    var CategoryName = "";
+    Layout = "_userLayout";
+    bool itemexist = false;
+
+}
+
+<style>
+    .nice-select.swal2-select {
+        display: none;
+    }
+</style>
+<div class="slider-area ">
+    <!-- Mobile Menu -->
+    <div class="single-slider slider-height2 d-flex align-items-center" data-background="/user/img/hero/category.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="hero-cap text-center">
+                        <h2>Product List</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- slider Area End-->
+<!-- product list part start-->
+<section class="product_list section_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="product_sidebar">
+                   
+                    <div class="single_sedebar">
+                        <div class="select_option">
+                            <div class="select_option_list">Choose Category <i class="right fas fa-caret-down"></i> </div>
+                            <div class="select_option_dropdown">
+
+                                @foreach (var item in ViewBag.categories)
+                                {
+
+                                    <p><a asp-controller="@controller" asp-action="Category" asp-route-Id="@item.Id">@item.Name</a></p>
+
+                                }
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="product_list">
+                 
+                    <div class="row">
+
+                        @foreach (var item in Model)
+                        {
+                            itemexist = true;
+                            <div class="col-lg-4 col-sm-4">
+                                <div class="single_product_item">
+                                    <div>
+                                        <center><h5>@item.Category.Name</h5></center>
+                                        <a asp-controller="@controller" asp-action="Detail" asp-route-productId="@item.Id">
+                                            <center><img src="~/user/img/categori/@item.ImgPath" alt="" width="175" height="225"></center>
+                                        </a>
+                                    </div> <br />
+                                    <div class="product-caption">
+                                        <center>
+                                            @item.ProductName
+
+                                            <br />
+                                            $ @item.Price
+                                            <div>
+                                                <br />
+                                                <button class="btn hero-btn my-cart-btn" data-id="@item.Id" data-name="@item.ProductName" data-summary="test-summary" data-price="@item.Price" data-quantity="1" data-image="/user/img/categori/@item.ImgPath"><small>Add To Cart</small></button>
+                                            </div>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>}
+                        @if (!itemexist)
+                        {
+                            <div>
+
+                                <h2 style="text-align:center">Sorry, products are not available right now ! ! !</h2>
+
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- product list part end-->
+@section Scripts
+    {
+    <script src="@Url.Content("~/js/common.js")" type="text/javascript"></script>
+
+    @if (TempData["notice"] != null)
+    {
+        switch ((int)TempData["notice"])
+        {
+            case (int)StatusEnum.NoticeStatus.Success:
+                <script>SaveAlert('center', 'success', 'Order');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Edit:
+                <script>EditAlert('center', 'success', 'Order');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Delete:
+                <script>DeleteAlert('center', 'success', 'Order');</script>
+                break;
+        }
+
+    }
+
+    <script src="@Url.Content("~/js/jquery.mycart.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var goToCartIcon = function ($addTocartBtn) {
+                var $cartIcon = $(".my-cart-icon");
+                var $image = $('<img width="30px" height="30px" src="' + $addTocartBtn.data("image") + '"/>').css({ "position": "fixed", "z-index": "999" });
+                $addTocartBtn.prepend($image);
+                var position = $cartIcon.position();
+                $image.animate({
+                    top: position.top,
+                    right: 100
+                }, 800, "linear", function () {
+                    $image.remove();
+                });
+            }
+
+            $('.my-cart-btn').myCart({
+                currencySymbol: '$',
+                classCartIcon: 'my-cart-icon',
+                classCartBadge: 'my-cart-badge',
+                classProductQuantity: 'my-product-quantity',
+                classProductRemove: 'my-product-remove',
+                classCheckoutCart: 'my-cart-checkout',
+                affixCartIcon: true,
+                showCheckoutModal: true,
+                numberOfDecimals: 2,
+                clickOnAddToCart: function ($addTocart) {
+                    goToCartIcon($addTocart);
+                },
+                afterAddOnCart: function (products, totalPrice, totalQuantity) {
+                },
+                clickOnCartIcon: function ($cartIcon, products, totalPrice, totalQuantity) {
+                },
+                checkoutCart: function (products, totalPrice, totalQuantity) {
+                    var checkoutString = "Total Price: " + totalPrice + "\nTotal Quantity: " + totalQuantity;
+                    checkoutString += "\n\n id \t name \t summary \t price \t quantity \t image path";
+                    $.each(products, function () {
+                        checkoutString += ("\n " + this.id + " \t " + this.name + " \t " + this.summary + " \t " + this.price + " \t " + this.quantity + " \t " + this.image);
+                    });
+                    debugger;
+                    //ajax
+                    $.ajax({
+                        url: '/Home/CheckOutProductList',
+                        type: "POST",
+                        dataType: "JSON",
+                        async: false,
+                        cache: false,
+                        data: { items: products },
+                        success: function (Resmodel) {
+                            window.location = "/Home/CheckOut"
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                        }
+
+                    }).done(function (data) {
+
+
+
+                    }).fail(function (data) {
+
+                    });
+                },
+                getDiscountPrice: function (products, totalPrice, totalQuantity) {
+                    return totalPrice * 0.5;
+                }
+            });
+        });
+    </script>
+}

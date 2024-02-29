@@ -1,0 +1,130 @@
+﻿@using Presentation.Enums
+@using X.PagedList
+@model IEnumerable<Core.Entities.Order>
+
+@{
+    var controller = "Order";
+    ViewData["Title"] = "Show Order";
+    var query = Context.Request.Query;
+    var Email = query["Email"];
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="/@controller/Index" method="get">
+            <div class="row mb-3">
+                <div class="col-4 d-flex">
+                    <input type="text" class="form-control" value="@Email" name="Email" placeholder="Enter User Email Name ...">
+                </div>
+                <div class="col-4">
+                    <select class="form-select px-2" name="IsDeliver" id="" asp-items="ViewBag.Deliver">
+                        <option value="0">Select IsDeliver Status</option>
+                    </select>
+                </div>
+
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary mx-1">Search</button>
+                    <a asp-controller="/@controller" asp-action="Index" class="btn btn-secondary mx-1">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Total Price</th>
+                    <th>IsDeliver</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @{int count = 1; }
+                @foreach (var item in Model)
+                {
+                <tr style="height:100px;">
+                    <td>@((((int)ViewBag.Page - 1) * (int)ViewBag.PageSize) + count)</td>
+                    <td>@item.CustName</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Address</td>
+                    <td>@item.TotalPrice</td>
+                    <td>
+
+                        @if (@item.IsDeliver == "1")
+                        {
+                            <span class="badge bg-label-success me-1">Delivered</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-label-warning me-1">Pending</span>
+                        }
+
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                @if (@item.IsDeliver == null)
+                                {
+                                    <a asp-controller="@controller" asp-action="OrderDetail" asp-route-Id="@item.Id" class="dropdown-item"><i class="bx bx-detail me-1"></i>Order Detail</a>
+                                    <button asp-controller="@controller" asp-action="Deliver" asp-route-Id="@item.Id" class="dropdown-item"
+                                            onclick="DeliverConfirm('/@controller/Deliver/',@item.Id)">
+                                        <i class="bx bx-trending-up me-1"></i> Deliver
+                                    </button>
+                                    <button asp-controller="@controller" asp-action="Delete" asp-route-Id="@item.Id" class="dropdown-item"
+                                            onclick="DeleteConfirm('/@controller/DeleteOrder/',@item.Id)">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </button>
+                                }
+                                else
+                                {
+                                    <a asp-controller="@controller" asp-action="OrderDetail" asp-route-Id="@item.Id" class="dropdown-item"><i class="bx bx-detail me-1"></i>Order Detail</a>
+                                }
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pagination" model="Model" view-data="ViewData" />
+</div>
+
+@section Scripts
+{
+    <script src="@Url.Content("~/js/common.js")" type="text/javascript"></script>
+
+    @if (TempData["notice"] != null)
+    {
+        switch ((int)TempData["notice"])
+        {
+            case (int)StatusEnum.NoticeStatus.Success:
+                <script>SaveAlert('center', 'success', 'Order');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Edit:
+                <script>EditAlert('center', 'success', 'Order');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Delete:
+                <script>DeleteAlert('center', 'success', 'Order');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Deliver:
+                <script>DeliverAlert('center', 'success', 'Order');</script>
+                break;
+        }
+
+    }
+}

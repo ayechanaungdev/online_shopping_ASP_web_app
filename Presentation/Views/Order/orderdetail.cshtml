@@ -1,0 +1,78 @@
+﻿@using Presentation.Enums
+@using X.PagedList
+@model IEnumerable<Core.Entities.OrderDetails>
+
+@{
+    var controller = "Order";
+    ViewData["Title"] = "Show Order Details";
+    var query = Context.Request.Query;
+}
+
+<div class="card">
+    <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Product Name</th>
+                    <th>Product Image</th>
+                    <th>Product Information</th>
+                    <th>Product Category</th>
+                    <th>Product Qty</th>
+                    <th>Qty Price</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @{int count = 1; }
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@((((int)ViewBag.Page - 1) * (int)ViewBag.PageSize) + count)</td>
+                    <td>@item.Product.ProductName</td>
+                    <td>
+                        <div class="w-50 h-50">
+                            <div class="card">
+                                <img class="card-img-top" src="~/Files/@item.Product.ImgPath" alt="Product Image" />
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-overflow-dynamic-container">
+                            <span class="text-overflow-dynamic-ellipsis" title="...your text again for usability...">
+                                @item.Product.Information
+                            </span>
+                        </span>
+                    </td>
+                    <td>@item.Product.Category.Name</td>
+                    <td>@item.Qty</td>
+                    <td>@item.QtyPrice</td>
+                </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pagination" model="Model" view-data="ViewData" />
+</div>
+
+@section Scripts
+{
+    <script src="@Url.Content("~/js/common.js")" type="text/javascript"></script>
+
+    @if (TempData["notice"] != null)
+    {
+        switch ((int)TempData["notice"])
+        {
+            case (int)StatusEnum.NoticeStatus.Success:
+                <script>SaveAlert('center', 'success', 'Order Detail');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Edit:
+                <script>EditAlert('center', 'success', 'Order Detail');</script>
+                break;
+            case (int)StatusEnum.NoticeStatus.Delete:
+                <script>DeleteAlert('center', 'success', 'Order Detail');</script>
+                break;
+        }
+
+    }
+}

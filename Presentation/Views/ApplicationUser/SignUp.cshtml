@@ -1,0 +1,113 @@
+﻿@model Presentation.Models.RegisterViewModel
+@{
+    Layout = "_loginLayout";
+
+    var controller = "ApplicationUser";
+}
+
+<!-- Content -->
+                <div class="card-body">
+                    <!-- Logo -->
+                    <div class="app-brand justify-content-center">
+                        <a asp-controller="ApplicationUser" asp-action="SignUp" class="app-brand-link gap-2">
+                            <span class="app-brand-text demo text-body fw-bolder">Estore</span>
+                        </a>
+                    </div>
+                    <!-- /Logo -->
+                    <h4 class="mb-2">Adventure starts here 🚀</h4>
+                    <p class="mb-4">Make your app management easy and fun!</p>
+
+                    <form id="formAuthentication" class="mb-3" action="SignUp" method="POST" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Name</label>
+                            <input type="text"
+                                   asp-for="Name"
+                                   class="form-control"
+                                   placeholder="Enter your Name"
+                                   autofocus />
+                        </div>
+                        <span asp-validation-for="Name" class="text-danger mb-3"></span>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">User Name</label>
+                            <input type="text"
+                                   asp-for="UserName"
+                                   class="form-control"
+                                   placeholder="Enter your username"
+                                   autofocus />
+                        </div>
+                        <span asp-validation-for="UserName" class="text-danger mb-3"></span>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Email</label>
+                            <input type="text"
+                                   asp-for="Email"
+                                   class="form-control"
+                                   placeholder="Enter your Email"
+                                   autofocus />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger mb-3"></span>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">NRC</label>
+                            <input type="text"
+                                   asp-for="NRC"
+                                   class="form-control"
+                                   placeholder="Enter your NRC Number"
+                                   autofocus />
+                        </div>
+                        <span asp-validation-for="NRC" class="text-danger mb-3"></span>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Phone Number</label>
+                            <input type="text"
+                                   asp-for="PhoneNumber"
+                                   class="form-control"
+                                   placeholder="Enter your Phone Number"
+                                   autofocus />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger mb-3"></span>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Profile Photo</label>
+                            <input type="file" class="form-control" id="File_Upload" name="File" accept=".png, .jpg, .jpeg" />
+                        </div>
+
+                        <div class="mb-3 form-password-toggle">
+                            <label class="form-label" for="password">Password</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password"
+                                       asp-for="Password"
+                                       class="form-control"
+                                       placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                       aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger mb-3"></span>
+
+                        <div class="mb-3 form-password-toggle">
+                            <label class="form-label" for="password">Confirm Password</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password"
+                                       asp-for="ConfirmPassword"
+                                       class="form-control"
+                                       placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                       aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger mb-3"></span>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <button class="btn btn-primary d-grid w-100">Sign up</button>
+                    </form>
+
+                    <p class="text-center">
+                        <span>Already have an account?</span>
+                        <a href="Login">
+                            <span>Sign in instead</span>
+                        </a>
+                    </p>
+                </div>
